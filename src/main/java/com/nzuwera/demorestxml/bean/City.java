@@ -2,14 +2,14 @@ package com.nzuwera.demorestxml.bean;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.UUID;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "CITIES")
@@ -18,10 +18,18 @@ public class City implements Serializable {
 
     private static final long serialVersionUID = 21L;
 
+    /*    @Id
+        @JacksonXmlProperty(isAttribute = true)
+        @NotNull
+        @Column(name = "ID", nullable = false)
+        @Type(type = "pg-uuid")
+        @GeneratedValue(generator = "uuid2")
+        @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")*/
+    @NotNull
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @JacksonXmlProperty(isAttribute = true)
-    private Long id;
+    @Column(name = "ID", nullable = false)
+    @Type(type = "pg-uuid")
+    private UUID guid;
 
     @JacksonXmlProperty(isAttribute = true)
     private String name;
@@ -32,18 +40,19 @@ public class City implements Serializable {
     public City() {
     }
 
-    public City(Long id, String name, int population) {
-        this.id = id;
+    public City(@NotNull UUID guid, String name, int population) {
+        this.guid = guid;
         this.name = name;
         this.population = population;
     }
 
-    public Long getId() {
-        return id;
+    @NotNull
+    public UUID getGuid() {
+        return guid;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setGuid(@NotNull UUID guid) {
+        this.guid = guid;
     }
 
     public String getName() {
@@ -63,39 +72,26 @@ public class City implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return "City{" + "id=" + id + ", name=" + name
-                + ", population=" + population + '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        City city = (City) o;
+        return population == city.population &&
+                Objects.equals(guid, city.guid) &&
+                Objects.equals(name, city.name);
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 37 * hash + Objects.hashCode(this.id);
-        hash = 37 * hash + Objects.hashCode(this.name);
-        hash = 37 * hash + this.population;
-        return hash;
+        return Objects.hash(guid, name, population);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final City other = (City) obj;
-        if (this.population != other.population) {
-            return false;
-        }
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-
-        return Objects.equals(this.id, other.id);
+    public String toString() {
+        return "City{" +
+                "guid=" + guid +
+                ", name='" + name + '\'' +
+                ", population=" + population +
+                '}';
     }
 }

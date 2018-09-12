@@ -1,6 +1,7 @@
 package com.nzuwera.demorestxml.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.nzuwera.demorestxml.bean.Cities;
 import com.nzuwera.demorestxml.bean.City;
@@ -24,9 +25,9 @@ public class CityService implements ICityService {
     }
 
     @Override
-    public City findById(Long id) {
+    public City findById(UUID id) {
 
-        City city = repository.findOne(id);
+        City city = repository.findByGuid(id);
         return city;
     }
 }

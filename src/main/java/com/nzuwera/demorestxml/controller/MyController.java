@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 public class MyController {
 
@@ -22,8 +24,8 @@ public class MyController {
     }
 
     @RequestMapping(value = "/cities/{cityId}", produces = MediaType.APPLICATION_XML_VALUE)
-    public City findCity(@PathVariable Long cityId) {
-
-        return cityService.findById(cityId);
+    public City findCity(@PathVariable String cityId) {
+        UUID id = UUID.fromString(cityId);
+        return cityService.findById(id);
     }
 }
